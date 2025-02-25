@@ -1,7 +1,14 @@
+import os
+from dotenv import load_dotenv
+
 import pandas as pd
 from datasets import load_dataset
+from huggingface_hub import login
 
+load_dotenv()
 dataset_name = "ServiceNow-AI/japanese_data"
+login(token=os.getenv("HUGGINGFACE_TOKEN"))
+
 dataset = load_dataset(dataset_name, "japanese_general_inst_following", split="train", batch_size=1000)
 batch_size = 100
 
