@@ -1,5 +1,8 @@
 import pandas as pd
+from datasets import load_dataset
 
+dataset_name = "ServiceNow-AI/japanese_data"
+dataset = load_dataset(dataset_name, "japanese_general_inst_following", split="train", batch_size=1000)
 
 def load_data(dataset, batch_size=100):
     total_rows = len(dataset)
@@ -15,4 +18,5 @@ def load_data(dataset, batch_size=100):
         df_batch = pd.DataFrame(batch)
         yield df_batch
 
-
+def get_data():
+    return dataset

@@ -4,13 +4,13 @@ import streamlit as st
 from datasets import load_dataset
 from huggingface_hub import login
 
-from data_loader import load_data
-
-dataset_name = "ServiceNow-AI/japanese_data"
+from data_loader import load_data, get_data
 
 # Initialize session state if it doesn't exist
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
+if 'dataset' not in st.session_state:
+    st.session_state.dataset = None
 
 # Allow users to input their Hugging Face token
 huggingface_token = st.text_input("Enter your Hugging Face Token:")
@@ -23,16 +23,14 @@ if huggingface_token and not st.session_state.authenticated:
         # If successful, update session state to reflect that the user is authenticated
         st.session_state.authenticated = True
         st.write("You are logged in!")
+        st.session_state.dataset = get_data()
+
     except Exception as e:
         st.error(f"Authentication failed: {e}")
 
 # If the user is authenticated, show some other content (e.g., model interaction)
 if st.session_state.authenticated:
-    dataset = load_dataset(dataset_name, "japanese_general_inst_following", split="train", batch_size=1000)
     batch_size = 100
-
-    BATCH_NUMBER = 0
-    RECORD_NUMBER = 0
 
     def display_conversation(selected_record):
         convo = selected_record.get("conversation")
@@ -50,7 +48,7 @@ if st.session_state.authenticated:
 
     st.title("Japanese Dataset Viewer")
 
-    batch_generator = load_data(dataset)
+    batch_generator = load_data(st.session_state.dataset)
     batches = list(batch_generator)  # Collect all batches into a list (for pagination)
     num_batches = len(batches)
 
