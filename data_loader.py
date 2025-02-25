@@ -2,13 +2,14 @@ import os
 from dotenv import load_dotenv
 
 import pandas as pd
+import streamlit as st
 from datasets import load_dataset
 from huggingface_hub import login
 
 load_dotenv()
 dataset_name = "ServiceNow-AI/japanese_data"
-token = os.getenv("HUGGINGFACE_TOKEN")
-login(token=token)
+huggingface_token = st.secrets["huggingface"]["token"]
+login(token=huggingface_token)
 
 dataset = load_dataset(dataset_name, "japanese_general_inst_following", split="train", batch_size=1000)
 batch_size = 100
