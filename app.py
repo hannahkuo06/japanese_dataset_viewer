@@ -1,10 +1,8 @@
 import random
 
 import streamlit as st
-from datasets import load_dataset
-from huggingface_hub import login
 
-from data_loader import load_data, get_data
+from data_loader import get_data_generator, load_data
 
 # Initialize session state if it doesn't exist
 if 'authenticated' not in st.session_state:
@@ -18,12 +16,7 @@ huggingface_token = st.text_input("Enter your Hugging Face Token:")
 # Check if token is provided and authenticate
 if huggingface_token and not st.session_state.authenticated:
     try:
-        # Try to authenticate the user
-        login(token=huggingface_token)
-        # If successful, update session state to reflect that the user is authenticated
-        st.session_state.authenticated = True
-        st.write("You are logged in!")
-        st.session_state.dataset = get_data()
+        st.session_state.authenticated, st.session_state.dataset = load_data(huggingface_token)
 
     except Exception as e:
         st.error(f"Authentication failed: {e}")
@@ -48,7 +41,7 @@ if st.session_state.authenticated:
 
     st.title("Japanese Dataset Viewer")
 
-    batch_generator = load_data(st.session_state.dataset)
+    batch_generator = get_data_generator(st.session_state.dataset)
     batches = list(batch_generator)  # Collect all batches into a list (for pagination)
     num_batches = len(batches)
 
