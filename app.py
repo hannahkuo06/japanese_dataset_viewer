@@ -98,5 +98,8 @@ if st.session_state.authenticated:
 
     # Display the selected conversation
     st.write(f"Currently Viewing: Batch {st.session_state.batch_index}, Record {st.session_state.current_record_index}")
+
+    id = selected_record.get("id")
+    st.subheader(f"ID: {id}")
     st.subheader("Conversation:")
     display_conversation(selected_record)
