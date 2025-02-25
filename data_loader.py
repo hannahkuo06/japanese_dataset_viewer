@@ -7,7 +7,8 @@ from huggingface_hub import login
 
 load_dotenv()
 dataset_name = "ServiceNow-AI/japanese_data"
-login(token=os.getenv("HUGGINGFACE_TOKEN"))
+token = os.getenv("HUGGINGFACE_TOKEN")
+login(token=token)
 
 dataset = load_dataset(dataset_name, "japanese_general_inst_following", split="train", batch_size=1000)
 batch_size = 100

@@ -48,55 +48,36 @@ st.session_state.current_record_index = selected_record_index  # Extract record 
 
 # Streamlit App Layout
 # Navigation buttons to move through the records
-if st.button("Next"):
-    # Increment the current_record_index and possibly batch_index
-    print("current batch:", st.session_state.batch_index)
-    print("current record:", st.session_state.current_record_index)
-    if st.session_state.current_record_index < len(batch) - 1:
-        st.session_state.current_record_index += 1
-    else:
-        # Move to next batch and reset record to 0
-        st.session_state.current_record_index = 0
-        if st.session_state.batch_index < num_batches - 1:
-            st.session_state.batch_index += 1
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Next"):
+        # Increment the current_record_index and possibly batch_index
+        if st.session_state.current_record_index < len(batch) - 1:
+            st.session_state.current_record_index += 1
         else:
-            # Loop back to the first batch
-            st.session_state.batch_index = 0
+            # Move to next batch and reset record to 0
+            st.session_state.current_record_index = 0
+            if st.session_state.batch_index < num_batches - 1:
+                st.session_state.batch_index += 1
+            else:
+                # Loop back to the first batch
+                st.session_state.batch_index = 0
 
-    # Update batch and record based on the session state
-    batch = batches[st.session_state.batch_index]
-    selected_record = batch.iloc[st.session_state.current_record_index]
+with col2:
+    if st.button("Random"):
+        # Randomly select a batch and record within the valid range
+        random_batch_index = random.randint(0, num_batches - 1)
+        random_record_index = random.randint(0, len(batches[random_batch_index]) - 1)
 
-    # Display the selected conversation
-    st.write(f"Currently Viewing: Batch {st.session_state.batch_index}, Record {st.session_state.current_record_index}")
+        # Update the session state with the random values
+        st.session_state.batch_index = random_batch_index
+        st.session_state.current_record_index = random_record_index
 
-    st.subheader("Conversation:")
-    display_conversation(selected_record)
+        # Get the selected batch and record for the normal view
+batch = batches[st.session_state.batch_index]
+selected_record = batch.iloc[st.session_state.current_record_index]
 
-if st.button("Random"):
-    # Randomly select a batch and record within the valid range
-    random_batch_index = random.randint(0, num_batches - 1)
-    random_record_index = random.randint(0, len(batches[random_batch_index]) - 1)
-
-    # Update the session state with the random values
-    st.session_state.batch_index = random_batch_index
-    st.session_state.current_record_index = random_record_index
-
-    # Get the randomly selected batch and record
-    batch = batches[st.session_state.batch_index]
-    selected_record = batch.iloc[st.session_state.current_record_index]
-
-    # Display the random conversation
-    st.write(f"Currently Viewing [RANDOM]: Batch {st.session_state.batch_index}, Record {st.session_state.current_record_index}")
-    st.subheader("Conversation:")
-    display_conversation(selected_record)
-
-else:
-    # Get the selected batch and record for the normal view
-    batch = batches[st.session_state.batch_index]
-    selected_record = batch.iloc[st.session_state.current_record_index]
-
-    # Display the selected conversation
-    st.write(f"Currently Viewing: Batch {st.session_state.batch_index}, Record {st.session_state.current_record_index}")
-    st.subheader("Conversation:")
-    display_conversation(selected_record)
+# Display the selected conversation
+st.write(f"Currently Viewing: Batch {st.session_state.batch_index}, Record {st.session_state.current_record_index}")
+st.subheader("Conversation:")
+display_conversation(selected_record)
